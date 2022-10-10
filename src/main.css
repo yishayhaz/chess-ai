@@ -1,0 +1,49 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+}
+
+.board {
+  width: 40vw;
+  height: 40vw;
+
+  background-image: url("themes/main.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+}
+
+.square {
+  position: relative;
+  cursor: pointer;
+
+  display: grid;
+  place-items: center;
+
+  transition: scale 0.2s;
+
+  background: var(--src, "");
+  background-size: cover;
+}
+
+.square.hover::before {
+  content: "";
+  position: absolute;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background: #4f4f4f40;
+}
+
+.square:active {
+  scale: 0.8;
+}
