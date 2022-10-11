@@ -36,7 +36,13 @@ const aiMove = (fen) => {
   return bestMove;
 };
 
-const minimax = (board, depth = 0, isMaximizing = true) => {
+const minimax = (
+  board,
+  depth = 0,
+  isMaximizing = true,
+  alpha = -scores.INFNITY,
+  beta = scores.INFNITY
+) => {
   amount++;
   if (board.isCheckmate()) {
     if (isMaximizing) {
@@ -59,10 +65,15 @@ const minimax = (board, depth = 0, isMaximizing = true) => {
 
     for (const move of board.moves()) {
       board.move(move);
-      const evl = minimax(board, depth + 1, false);
+      const evl = minimax(board, depth + 1, false, alpha, beta);
       board.undo();
 
       best = Math.max(best, evl);
+      alpha = Math.max(alpha, best);
+
+      if (beta <= alpha) {
+        break;
+      }
     }
 
     return best;
@@ -71,10 +82,15 @@ const minimax = (board, depth = 0, isMaximizing = true) => {
 
     for (const move of board.moves()) {
       board.move(move);
-      const evl = minimax(board, depth + 1, true);
+      const evl = minimax(board, depth + 1, true, alpha, beta);
       board.undo();
 
       best = Math.min(best, evl);
+      beta = Math.min(beta, best);
+
+      if (beta <= alpha) {
+        break;
+      }
     }
 
     return best;

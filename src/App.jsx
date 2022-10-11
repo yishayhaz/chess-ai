@@ -13,7 +13,9 @@ import { aiMove } from "./ai";
 // const DEFAULT_POSITION = "8/7k/8/8/8/5Rp1/6R1/K7 w - - 0 1";
 // "rnbqk2r/pppp1ppp/5n2/2b1p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4";
 
-const DEFAULT_POSITION = "1k1r4/ppN5/8/8/5Q2/8/7B/4K3 w - - 0 1"; // smothered mate
+// const DEFAULT_POSITION = "1k1r4/ppN5/8/8/5Q2/8/7B/4K3 w - - 0 1"; // smothered mate
+const DEFAULT_POSITION =
+  "6k1/3b3r/1p1p4/p1n2p2/1PPNpP1q/P3Q1p1/1R1RB1P1/5K2 b - - 0 1";
 
 const chess = new Chess(DEFAULT_POSITION);
 
