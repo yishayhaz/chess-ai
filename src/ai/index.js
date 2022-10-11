@@ -1,4 +1,5 @@
 import { Chess } from "chess.js";
+import { eveluatePosition } from "../helpers";
 
 const scores = {
   WIN: 1_000,
@@ -6,13 +7,19 @@ const scores = {
   DRAW: 0,
 };
 
+let timer = null;
+let amount = 0;
+
 const aiMove = (fen) => {
+  timer = Date.now();
+
   const chess = new Chess(fen);
 
   let bestScore = -scores.INFNITY;
   let bestMove;
 
   for (const move of chess.moves()) {
+    amount++;
     chess.move(move);
     const evl = minimax(chess, 0, false);
     chess.undo(move);
@@ -23,10 +30,14 @@ const aiMove = (fen) => {
     }
   }
 
-  console.log({ bestScore, bestMove });
+  timer = ~~((Date.now() - timer) / 1000) + "s";
+  console.log({ bestScore, bestMove, timer, amount });
+
+  return bestMove;
 };
 
 const minimax = (board, depth = 0, isMaximizing = true) => {
+  amount++;
   if (board.isCheckmate()) {
     if (isMaximizing) {
       return -scores.WIN + depth;
@@ -36,12 +47,7 @@ const minimax = (board, depth = 0, isMaximizing = true) => {
   }
 
   if (depth >= 3) {
-    const { sum } = eveluatePosition(board.fen());
-    // sum = white-black
-
-    if (board.turn() === "b") {
-      return -sum;
-    } else return sum;
+    return eveluatePosition(board.fen(), board.turn()).sum;
   }
 
   if (board.isDraw()) {
@@ -75,32 +81,4 @@ const minimax = (board, depth = 0, isMaximizing = true) => {
   }
 };
 
-const valueTable = {
-  p: 10,
-  n: 30,
-  b: 30,
-  r: 50,
-  q: 90,
-  k: 0,
-};
-
-const eveluatePosition = (fen) => {
-  let white = 0;
-  let black = 0;
-
-  fen
-    .split(" ")[0]
-    .split("")
-    .forEach((piece) => {
-      const value = valueTable[piece.toLowerCase()];
-      if (value) {
-        if (piece === piece.toLowerCase()) {
-          black += value;
-        } else white += value;
-      }
-    });
-
-  return { black, white, sum: white - black };
-};
-
-export { aiMove, eveluatePosition };
+export { aiMove };

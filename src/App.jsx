@@ -1,14 +1,21 @@
 import { Chess } from "chess.js";
 import { useState, useEffect } from "react";
-import { convertNullsToEmpty, getPieceImgProps, selectPiece } from "./helpers";
-import { aiMove, eveluatePosition } from "./ai";
+import {
+  convertNullsToEmpty,
+  getPieceImgProps,
+  eveluatePosition,
+  selectPiece,
+} from "./helpers";
+import { aiMove } from "./ai";
 
-const DEFAULT_POSITION =
-  "rn1qk2r/Qppp2pR/2n1pp2/4b3/7N/7K/1PPPPPPP/1NB2B1R w - - 0 1";
 // const DEFAULT_POSITION =
+//   "rn1qk2r/Qppp2pR/2n1pp2/4b3/7N/7K/1PPPPPPP/1NB2B1R w - - 0 1";
+// const DEFAULT_POSITION = "8/7k/8/8/8/5Rp1/6R1/K7 w - - 0 1";
 // "rnbqk2r/pppp1ppp/5n2/2b1p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4";
 
-const chess = new Chess();
+const DEFAULT_POSITION = "1k1r4/ppN5/8/8/5Q2/8/7B/4K3 w - - 0 1"; // smothered mate
+
+const chess = new Chess(DEFAULT_POSITION);
 
 function App() {
   const [board, setBoard] = useState(convertNullsToEmpty(chess.board()));
@@ -20,6 +27,7 @@ function App() {
     } else {
       if (crrSelection.moves?.some((move) => move.includes(piece.square))) {
         makeMove(piece.square); // move!
+        handleAiMove();
       } else {
         handleCrrSelection(piece); // illegal move
       }
@@ -41,13 +49,7 @@ function App() {
     chess.move({ from: crrSelection.piece.square, to });
     setCrrSelection({});
     setBoard(convertNullsToEmpty(chess.board()));
-
     checkGameStatus();
-
-    // setTimeout(() => {
-    //   chess.move(aiMove(chess.fen()));
-    //   setBoard(convertNullsToEmpty(chess.board()));
-    // }, 500);
   };
 
   const checkGameStatus = () => {
@@ -63,14 +65,31 @@ function App() {
     setCrrSelection({ piece, moves: chess.moves({ square: piece.square }) });
   };
 
+  const handleAiMove = async () => {
+    const bestMove = await aiPromise();
+    console.log({ bestMove });
+    chess.move(bestMove);
+    setBoard(convertNullsToEmpty(chess.board()));
+  };
+
+  function aiPromise() {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(aiMove(chess.fen())); // ! useTransition !
+      }, 100);
+    });
+  }
+
   useEffect(() => {
     onSelect();
   }, [crrSelection]);
 
   return (
     <>
-      <button onClick={() => aiMove(chess.fen())}>make ai move</button>
-      <button onClick={() => console.log(eveluatePosition(chess.fen()))}>
+      <button onClick={handleAiMove}>make ai move</button>
+      <button
+        onClick={() => window.alert(eveluatePosition(chess.fen()).sum / 10)}
+      >
         eveal
       </button>
       <div className="board">

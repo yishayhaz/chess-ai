@@ -1,0 +1,5 @@
+1. alpha-beta pruning
+2. better piece hover color
+3. eveluation bar
+4. game over popup
+5. drag & drop
