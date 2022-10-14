@@ -9,6 +9,7 @@ const scores = {
 
 let timer = null;
 let amount = 0;
+let total = 0;
 
 const aiMove = (fen) => {
   timer = Date.now();
@@ -31,7 +32,11 @@ const aiMove = (fen) => {
   }
 
   timer = ~~((Date.now() - timer) / 1000) + "s";
-  console.log({ bestScore, bestMove, timer, amount });
+  total += amount;
+
+  console.log({ bestScore, bestMove, timer, amount, total });
+
+  amount = 0;
 
   return bestMove;
 };

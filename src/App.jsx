@@ -22,6 +22,7 @@ const chess = new Chess(DEFAULT_POSITION);
 function App() {
   const [board, setBoard] = useState(convertNullsToEmpty(chess.board()));
   const [crrSelection, setCrrSelection] = useState({});
+  const [robotControl, setRobotControl] = useState(false);
 
   const handlePiece = (piece = {}) => {
     if (!crrSelection.piece) {
@@ -68,6 +69,7 @@ function App() {
   };
 
   const handleAiMove = async () => {
+    console.log("starting ai move");
     const bestMove = await aiPromise();
     console.log({ bestMove });
     chess.move(bestMove);
@@ -77,10 +79,17 @@ function App() {
   function aiPromise() {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(aiMove(chess.fen())); // ! useTransition !
+        resolve(aiMove(chess.fen()));
       }, 100);
     });
   }
+
+  const giveAwayControl = () => {
+    if (!robotControl) {
+      handleAiMove();
+    }
+    setRobotControl(!robotControl);
+  };
 
   useEffect(() => {
     onSelect();
@@ -88,7 +97,7 @@ function App() {
 
   return (
     <>
-      <button onClick={handleAiMove}>make ai move</button>
+      <button onClick={giveAwayControl}>Let the robot control</button>
       <button
         onClick={() => window.alert(eveluatePosition(chess.fen()).sum / 10)}
       >
